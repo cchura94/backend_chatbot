@@ -1,54 +1,33 @@
-const axios = require("axios")
+const axios = require("axios");
+const messageService = require("./../services/message.service");
+const statusService = require("./../services/status.service");
 
 const funNotificacion = async (req, res) => {
-  // console.log("Mensaje Recibido: ", JSON.stringify(req.body, null, 2));
-
   const message = req.body.entry?.[0]?.changes[0]?.value?.messages?.[0];
 
-  console.log(message?.text)
-
-  // check if the incoming message contains text
   if (message?.type === "text") {
-    // extract the business number to send the reply from it
-    const business_phone_number_id =
-      req.body.entry?.[0].changes?.[0].value?.metadata?.phone_number_id;
+    let nombre =
+      req.body.entry?.[0]?.changes[0]?.value?.contacts[0]?.profile?.name;
+    let mensaje = message.text.body;
+    
+    if(["Hola", "ola", "hola"].includes(mensaje)){
+      messageService.sendMessageText(
+        message.from,
+        "Hola " + nombre + ", en que te puedo ayudar"
+      );
+    }else{
+      messageService.sendMessageTextRespuesta(message.from, `Hola ${nombre}, \n Te ofrecemos estos servicios:\n *A*: Soporte Computadoras\n *B*: Hablar con un asesor`, message.id)
+    }
 
-    // send a reply message as per the docs here https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages
-    await axios({
-      method: "POST",
-      url: `https://graph.facebook.com/v18.0/${business_phone_number_id}/messages`,
-      headers: {
-        Authorization: `Bearer ${process.env.GRAPH_API_TOKEN}`,
-      },
-      data: {
-        messaging_product: "whatsapp",
-        to: message.from,
-        text: { body: "Hola: " + message.text.body },
-        context: {
-          message_id: message.id, // shows the message as a reply to the original user message
-        },
-      },
-    });
-
-    // mark incoming message as read
-    await axios({
-      method: "POST",
-      url: `https://graph.facebook.com/v18.0/${business_phone_number_id}/messages`,
-      headers: {
-        Authorization: `Bearer ${process.env.GRAPH_API_TOKEN}`,
-      },
-      data: {
-        messaging_product: "whatsapp",
-        status: "read",
-        message_id: message.id,
-      },
-    });
+    statusService.sendMessageStatus(message, "read");
+  } else if (message?.type === "image") {
+    messageService.sendMessageText(message.from, "Me Mandaste una imagen");
+  } else if (message?.type === "audio") {
+    messageService.sendMessageText(message.from, "Me Mandaste un audio");
   }
 
   res.sendStatus(200);
-
 };
-
 
 const funVerificacion = (req, res) => {
   const mode = req.query["hub.mode"];
