@@ -1,0 +1,45 @@
+{
+    "flujoInicial": [
+        {
+            "step": 1,
+            "type": "text",
+            "content": "Hola, ¿en que te puedo ayudar?",
+            "nextStep": 2
+        },
+        {
+            "step": 2,
+            "type": "menu",
+            "content": {
+                "options": [
+                    {"option": "A", "text": "Consulta saldo pendiente", "nextStep": 3},
+                    {"option": "B", "text": "Hablar con un asesor", "nextStep": 4}
+                ]
+            },
+            "nextStep": 2
+        },
+        {
+            "step": 3,
+            "type": "text",
+            "content": "Por favor, envia tu nro de identificación",
+            "nextStep": 5
+        },
+        {
+            "step": 4,
+            "type": "text",
+            "content": "Un asesor te contactará en un momento o escribe al +59178965422",
+            "nextStep": null
+        },
+        {
+            "step": 5,
+            "type": "text",
+            "content": "Estamos verificando tu saldo pendiente...",
+            "nextStep": 6
+        },
+        {
+            "step": 6,
+            "type": "text",
+            "content": "Tu saldo pendiente es de $500. Gracias por tu paciencia",
+            "nextStep": null
+        }
+    ]
+}
