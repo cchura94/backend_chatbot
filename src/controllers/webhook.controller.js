@@ -65,7 +65,8 @@ const funNotificacion = async (req, res) => {
       }
     }else if(mensaje.toUpperCase() === "B"){
       messageService.sendMessageText(message.from, "Gracias, uno de nuestros asesores te contactará en un momento o escribe al 59173277937")
-      messageService.sendMessageText(59173277937, "hay una solicitud de un cliente: "+message.from)
+
+      messageService.sendMessageText(59160572737, "Hola raul, hay una solicitud de un cliente: "+message.from)
 
     }else{
       messageService.sendMessageTextRespuesta(message.from, `No entiendo tu mensaje ${nombre}. \n Por favor seleccionar una opción del menú:\n *A*: Consultar saldo\n *B*: Hablar con un asesor`, message.id)
