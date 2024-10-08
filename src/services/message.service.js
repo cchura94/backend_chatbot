@@ -16,7 +16,7 @@ const sendMessageText = (to, msg) => {
 // respuesta a un mensaje
 const sendMessageTextRespuesta = (to, msg, id_respuesta) => {
     
-    metaService().post("/messages", {
+    return metaService().post("/messages", {
         messaging_product: "whatsapp",
         to: to,
         text: { body: msg },
@@ -42,14 +42,14 @@ const sendMessageDocument = (to, doc) => {
 }
 
 const sendMessageImage = (to, img) => {
-    metaService().post("/messages", {
+    return metaService().post("/messages", {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
         "to": to,
         "type": "image",
         "image": {
           // "id" : "<MEDIA_ID>", /* Only if using uploaded media */
-          "link": img.url, /* Only if linking to your media */
+          "link": img.url_img, /* Only if linking to your media */
           "caption": img.caption
         }
       })

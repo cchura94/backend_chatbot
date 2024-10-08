@@ -20,6 +20,9 @@ const router = require("./routes")
 
 const app = express();
 app.use(morgan('dev'))
+
+app.use(express.static('public'));
+
 app.use(express.json()); // req.body (json)
 // cors
 app.use(cors())
