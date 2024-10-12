@@ -36,6 +36,9 @@ router.get("/", (req, res) => {
 router.post("/mensaje/texto", mensajeController.enviarMensajeTexto);
 router.post("/mensaje/imagen", upload.single('imagen'), mensajeController.enviarMensajeImagen);
 router.post("/mensaje/documento", mensajeController.enviarMensajeDocumento);
+router.post("/mensaje/lista", mensajeController.enviarMensajeLista);
+router.post("/mensaje/button", mensajeController.enviarMensajeButton);
+
 
 
 

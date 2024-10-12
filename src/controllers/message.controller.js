@@ -29,15 +29,17 @@ async function enviarMensajeImagen(req, res){
     const datos = req.body;
     const nro = datos.nro_whastsapp;
     // imagen
-    // datos.url_img = `http://127.0.0.1:3001/uploads/${req.file.filename}`;
-    datos.url_img = 'https://maformacion.es/club-marketing-automocion/wp-content/uploads/sites/3/2022/04/post-ventajas-chatbot-telegram.png'
+    datos.url_img = `https://8f64-189-28-91-238.ngrok-free.app/uploads/${req.file.filename}`;
+    // datos.url_img = 'https://maformacion.es/club-marketing-automocion/wp-content/uploads/sites/3/2022/04/post-ventajas-chatbot-telegram.png'
     try {
-        await sleep(2000);
+        await sleep(500);
 
         console.log(datos);
 
         const resp = await messageService.sendMessageImage(nro, datos);
         console.log(resp.data);
+
+        const resp2 = await messageService.sendMessageButton(nro, datos);
 
         return res.send({mensaje: "Mensaje Imagen enviado"});
 
@@ -59,8 +61,43 @@ function enviarMensajeDocumento(req, res){
     }
 }
 
+async function enviarMensajeLista(req, res){
+
+    const datos = req.body;
+   try {
+
+        const resp = await messageService.sendMessageLista(nro, datos);
+        console.log(resp.data);
+
+        return res.send({mensaje: "Mensaje Lista Enviado"});
+
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function enviarMensajeButton(req, res){
+
+    const datos = req.body;
+    const nro = datos.nro_whastsapp;
+   try {
+
+        const resp = await messageService.sendMessageButton(nro, datos);
+        console.log(resp.data);
+
+        return res.send({mensaje: "Mensaje Lista Enviado"});
+
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     enviarMensajeTexto,
     enviarMensajeImagen,
-    enviarMensajeDocumento
+    enviarMensajeDocumento,
+    enviarMensajeLista,
+    enviarMensajeButton
 }

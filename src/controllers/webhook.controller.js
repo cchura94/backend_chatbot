@@ -2,7 +2,8 @@ const axios = require("axios");
 const messageService = require("./../services/message.service");
 const statusService = require("./../services/status.service");
 const Cliente = require("../models/cliente.model");
-const flujo = require("./../data/flujo1.json")
+const flujo = require("./../data/flujo1.json");
+const Contacto = require("./../models/Contacto");
 
 const procesarFlujo = async (to, currentStep, msg) => {
   const stepData = flujo.flujoInicial.find(f => f.step === currentStep);
@@ -27,9 +28,13 @@ const procesarFlujo = async (to, currentStep, msg) => {
 const funNotificacion = async (req, res) => {
   const message = req.body.entry?.[0]?.changes[0]?.value?.messages?.[0];
 
+
+  // const { valores } = req.body.entry?.[0].changes[0]?.value?.messages[0]?.interactive
+  // console.log(req.body.entry?.[0].changes[0]?.value.messages[0].interactive)
+
   if (message?.type === "text") {
     let nombre =
-      req.body.entry?.[0]?.changes[0]?.value?.contacts[0]?.profile?.name;
+      req.body.entry[0]?.changes[0]?.value?.contacts[0]?.profile?.name;
     let mensaje = message.text.body;
     // ----------------------------
     // if(mensaje === "Hola"){
@@ -39,6 +44,19 @@ const funNotificacion = async (req, res) => {
     // ----------------------------
    
     if(["Hola", "ola", "hola"].includes(mensaje)){
+      // buscando en la BD
+      let cliente = await Contacto.findOne({where: {nro_whatsapp: message.from}})
+      if(!cliente){
+        await Contacto.create({
+          nombres: nombre,
+          apellidos: '',
+          nro_identificaion: '',
+          nro_whatsapp: message.from,
+          saldo: 0,
+        });
+        
+      }
+
       messageService.sendMessageText(
         message.from,
         `Hola ${nombre}, ¿En que te puedo ayudar?\n\n *Opciones:*\n*A*: Consultar saldo pendiente\n*B*: Hablar un asesor`
@@ -50,11 +68,12 @@ const funNotificacion = async (req, res) => {
       messageService.sendMessageText(message.from, "Estamos verificando, por favor espera un momento...");
 
       try {
-        let cliente = await Cliente.findOne({nro_identificaion: mensaje})
-        console.log(cliente);
-        
-        if(cliente){
-          messageService.sendMessageText(message.from, `Hola ${cliente.nombres}, tu saldo pendiente es de $${cliente.saldo}`)
+        // let cliente = await Cliente.findOne({nro_identificaion: mensaje})
+        // console.log(cliente);
+        let cliente = await Contacto.findAll({where: {nro_identificaion: mensaje}})
+        // console.log(cliente);
+        if(cliente.length>0){
+          messageService.sendMessageText(message.from, `Hola ${cliente[0].nombres}, tu saldo pendiente es de $${cliente[0].saldo}`)
         }else{
           messageService.sendMessageText(message.from, "No tenemos registrado ningun cliente con el número de identificación");
 
@@ -78,6 +97,11 @@ const funNotificacion = async (req, res) => {
     messageService.sendMessageText(message.from, "Me Mandaste una imagen");
   } else if (message?.type === "audio") {
     messageService.sendMessageText(message.from, "Me Mandaste un audio");
+  } else if(message?.type === "interactive"){
+    if(message.interactive.type == 'button_reply'){
+      
+      messageService.sendMessageText(message.from, "seleccionaste: "+ message.interactive.button_reply.title);
+    }
   }
 
   res.sendStatus(200);

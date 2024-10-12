@@ -2,9 +2,22 @@ const express = require("express");
 const mongoose = require("mongoose");
 var cors = require('cors')
 var morgan = require('morgan')
+const sequelize = require("./database/conexion")
 
 
 require('dotenv').config() // process.env.PORT
+
+// conexion con sql (postgresql)
+async function testConexionPostgres(){
+    try {
+        await sequelize.authenticate();
+        console.log('CONEXION CORRECTA CON POSTGRES.');
+      } catch (error) {
+        console.error('ERROR DE CONEXION CON POSTGRES:', error);
+      }
+}
+
+testConexionPostgres();
 
 // conexion con BD
 mongoose.connect(process.env.MONGODB_URI, /*{
