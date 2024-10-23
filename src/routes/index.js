@@ -4,6 +4,7 @@ const path = require("path");
 
 const webhookController = require("./../controllers/webhook.controller");
 const mensajeController = require("../controllers/message.controller");
+const openAiController = require("./../controllers/openai.controller")
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ router.post("/mensaje/documento", mensajeController.enviarMensajeDocumento);
 router.post("/mensaje/lista", mensajeController.enviarMensajeLista);
 router.post("/mensaje/button", mensajeController.enviarMensajeButton);
 
-
+router.post("/openai/mensaje/text", openAiController.preguntaTexto)
 
 
 module.exports = router;
