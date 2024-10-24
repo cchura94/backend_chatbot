@@ -4,6 +4,29 @@ const statusService = require("./../services/status.service");
 const Cliente = require("../models/cliente.model");
 const flujo = require("./../data/flujo1.json");
 const Contacto = require("./../models/Contacto");
+const nodemailer = require("nodemailer")
+
+const transporter = nodemailer.createTransport({
+  host: 'localhost',
+  port: 1025,
+  secure: false
+})
+
+/*
+transporter.sendMail({
+  from: "miempresa@mail.com",
+  to: "user@mail.com",
+  subject: `El contacto:... requiere atención por medio de whatsapp`,
+  text: "Hola raul, hay una solicitud de un cliente"
+}, function(error, info){
+  if(error){
+    console.log("error: ", error)
+  }else{
+    console.log("Corrreo enviado: "+info.response);
+  }
+})
+*/
+
 
 const procesarFlujo = async (to, currentStep, msg) => {
   const stepData = flujo.flujoInicial.find(f => f.step === currentStep);
@@ -44,6 +67,9 @@ const funNotificacion = async (req, res) => {
     // ----------------------------
    
     if(["Hola", "ola", "hola"].includes(mensaje)){
+
+
+
       // buscando en la BD
       let cliente = await Contacto.findOne({where: {nro_whatsapp: message.from}})
       if(!cliente){
@@ -83,6 +109,20 @@ const funNotificacion = async (req, res) => {
 
       }
     }else if(mensaje.toUpperCase() === "B"){
+
+      transporter.sendMail({
+        from: "miempresa@mail.com",
+        to: "user@mail.com",
+        subject: `El contacto: ${message.from} requiere atención por medio de whatsapp`,
+        text: "Hola raul, hay una solicitud de un cliente"
+      }, function(error, info){
+        if(error){
+          console.log("error: ", error)
+        }else{
+          console.log("Corrreo enviado: "+info.response);
+        }
+      })
+      
       messageService.sendMessageText(message.from, "Gracias, uno de nuestros asesores te contactará en un momento o escribe al 59173277937")
 
       messageService.sendMessageText(59160572737, "Hola raul, hay una solicitud de un cliente: "+message.from)
